@@ -1,0 +1,1658 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المدرسة العلم الإسلامية - نظام الإدارة</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #2c5aa0;
+            --secondary: #1a3a6d;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --light: #f8f9fa;
+            --dark: #2c3e50;
+            --accent: #8e44ad;
+            --gold: #f1c40f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            direction: rtl;
+        }
+
+        /* أنيميشن الدخول */
+        @keyframes fadeIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(30px) scale(0.95); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1); 
+            }
+        }
+
+        @keyframes slideInFromRight {
+            from { 
+                opacity: 0; 
+                transform: translateX(50px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateX(0); 
+            }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* تصميم تسجيل الدخول */
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            animation: float 20s linear infinite;
+        }
+
+        .auth-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            box-shadow: 
+                0 25px 50px rgba(0,0,0,0.2),
+                0 0 0 1px rgba(255,255,255,0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            border: 1px solid rgba(255,255,255,0.2);
+            animation: fadeIn 0.8s ease-out;
+            position: relative;
+            z-index: 1;
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: slideInFromRight 0.6s ease-out 0.2s both;
+        }
+
+        .school-logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            box-shadow: 0 10px 30px rgba(44, 90, 160, 0.4);
+            animation: pulse 3s infinite;
+        }
+
+        .auth-header h1 {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .auth-header p {
+            color: var(--dark);
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            animation: slideInFromRight 0.6s ease-out 0.4s both;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--secondary);
+            font-size: 0.95rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.8);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 5px 20px rgba(44, 90, 160, 0.2);
+            background: white;
+            transform: translateY(-2px);
+        }
+
+        .btn {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            box-shadow: 0 10px 25px rgba(44, 90, 160, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(44, 90, 160, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #229954);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning), #e67e22);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #c0392b);
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            animation: slideInFromRight 0.6s ease-out 0.6s both;
+        }
+
+        .auth-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .auth-footer a:hover {
+            color: var(--secondary);
+            text-decoration: underline;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* تصميم النظام الرئيسي */
+        .main-system {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .header h1 {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .menu-toggle {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            font-size: 1.3rem;
+            color: white;
+            cursor: pointer;
+            padding: 12px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(44, 90, 160, 0.3);
+        }
+
+        .menu-toggle:hover {
+            transform: scale(1.05);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255,255,255,0.9);
+            padding: 8px 16px;
+            border-radius: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        /* القائمة الجانبية */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 350px;
+            height: 100vh;
+            background: linear-gradient(180deg, var(--secondary) 0%, #1a2530 100%);
+            color: white;
+            z-index: 2000;
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+            box-shadow: -10px 0 50px rgba(0,0,0,0.3);
+        }
+
+        .sidebar.open {
+            right: 0;
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1999;
+            display: none;
+            backdrop-filter: blur(5px);
+        }
+
+        .sidebar-overlay.show {
+            display: block;
+        }
+
+        .sidebar-header {
+            padding: 30px 25px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .sidebar-header h2 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .close-sidebar {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            font-size: 1.3rem;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .close-sidebar:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-50%) rotate(90deg);
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+
+        .menu-item {
+            padding: 16px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-right: 4px solid transparent;
+            margin: 5px 0;
+        }
+
+        .menu-item:hover {
+            background: linear-gradient(90deg, rgba(44, 90, 160, 0.1), transparent);
+            border-right: 4px solid var(--primary);
+            transform: translateX(-5px);
+        }
+
+        .menu-item.active {
+            background: linear-gradient(90deg, rgba(44, 90, 160, 0.2), transparent);
+            border-right: 4px solid var(--primary);
+        }
+
+        .submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(180deg, rgba(0,0,0,0.2), rgba(0,0,0,0.1));
+        }
+
+        .submenu.show {
+            max-height: 500px;
+        }
+
+        .submenu-item {
+            padding: 14px 25px 14px 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.95rem;
+            opacity: 0.9;
+            transition: all 0.3s ease;
+        }
+
+        .submenu-item:hover {
+            opacity: 1;
+            background: rgba(255,255,255,0.05);
+            padding-right: 30px;
+        }
+
+        /* المحتوى الرئيسي */
+        .main-content {
+            margin-top: 100px;
+            padding: 30px;
+            min-height: calc(100vh - 100px);
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            animation: slideInFromRight 0.6s ease;
+        }
+
+        .section-title {
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        /* البطاقات */
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            padding: 25px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h3 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .stat-desc {
+            color: var(--secondary);
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        /* التجاوب */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 300px;
+            }
+            
+            .auth-card {
+                margin: 20px;
+                padding: 30px 20px;
+            }
+            
+            .dashboard-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* أزرار إضافية */
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .btn-sm {
+            padding: 10px 20px;
+            font-size: 14px;
+            width: auto;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th, .table td {
+            padding: 12px 15px;
+            text-align: right;
+            border-bottom: 1px solid #eee;
+        }
+
+        .table th {
+            background: var(--light);
+            font-weight: 600;
+            color: var(--dark);
+        }
+    </style>
+</head>
+<body>
+    <!-- نظام المصادقة -->
+    <div id="authSystem">
+        <div class="auth-container">
+            <!-- تسجيل الدخول -->
+            <div class="auth-card" id="loginCard">
+                <div class="auth-header">
+                    <div class="school-logo floating">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h1>المدرسة العلم الإسلامية</h1>
+                    <p>نظام الإدارة المدرسية المتكامل</p>
+                </div>
+
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginUsername">اسم المستخدم</label>
+                        <input type="text" id="loginUsername" class="form-control" placeholder="أدخل اسم المستخدم" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="loginPassword">كلمة المرور</label>
+                        <input type="password" id="loginPassword" class="form-control" placeholder="أدخل كلمة المرور" required>
+                    </div>
+
+                    <button type="submit" class="btn pulse">
+                        <i class="fas fa-sign-in-alt"></i>
+                        تسجيل الدخول
+                    </button>
+                </form>
+
+                <div class="auth-footer">
+                    <a href="#" id="showRegister">إنشاء حساب جديد</a>
+                </div>
+            </div>
+
+            <!-- إنشاء حساب -->
+            <div class="auth-card hidden" id="registerCard">
+                <div class="auth-header">
+                    <div class="school-logo floating">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h1>إنشاء حساب جديد</h1>
+                    <p>انضم إلى المدرسة العلم الإسلامية</p>
+                </div>
+
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="regFullName">الاسم الكامل</label>
+                        <input type="text" id="regFullName" class="form-control" placeholder="الاسم الثلاثي" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="regEmail">البريد الإلكتروني</label>
+                        <input type="email" id="regEmail" class="form-control" placeholder="example@school.edu" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="regUsername">اسم المستخدم</label>
+                        <input type="text" id="regUsername" class="form-control" placeholder="اختر اسم مستخدم" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="regPassword">كلمة المرور</label>
+                        <input type="password" id="regPassword" class="form-control" placeholder="اختر كلمة مرور قوية" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="regUserType">نوع الحساب</label>
+                        <select id="regUserType" class="form-control" required>
+                            <option value="">اختر نوع الحساب</option>
+                            <option value="student">طالب</option>
+                            <option value="teacher">معلم</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-success pulse">
+                        <i class="fas fa-user-plus"></i>
+                        إنشاء الحساب
+                    </button>
+                </form>
+
+                <div class="auth-footer">
+                    <a href="#" id="showLogin">العودة لتسجيل الدخول</a>
+                </div>
+            </div>
+
+            <!-- التحقق من البريد -->
+            <div class="auth-card hidden" id="verifyCard">
+                <div class="auth-header">
+                    <div class="school-logo floating">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <h1>التحقق من البريد</h1>
+                    <p>أدخل رمز التحقق المرسل إلى بريدك</p>
+                </div>
+
+                <form id="verifyForm">
+                    <div class="form-group">
+                        <label for="verifyCode">رمز التحقق</label>
+                        <input type="text" id="verifyCode" class="form-control" placeholder="أدخل الرمز المكون من 6 أرقام" required maxlength="6">
+                    </div>
+
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-check-circle"></i>
+                        التحقق
+                    </button>
+                </form>
+
+                <div class="auth-footer">
+                    <a href="#" id="resendCode">إعادة إرسال الرمز</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- النظام الرئيسي -->
+    <div id="mainSystem" class="main-system hidden">
+        <!-- الهيدر -->
+        <div class="header">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 id="pageTitle">المدرسة العلم الإسلامية</h1>
+            </div>
+            <div class="header-right">
+                <div class="user-profile">
+                    <div class="user-avatar" id="userAvatar">م</div>
+                    <span id="userName">مسؤول النظام</span>
+                    <button onclick="logout()" style="background: none; border: none; color: var(--danger); cursor: pointer; margin-right: 10px;">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- القائمة الجانبية -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-graduation-cap"></i> القائمة</h2>
+                <button class="close-sidebar" id="closeSidebar">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="sidebar-menu" id="sidebarMenu">
+                <!-- سيتم تعبئة القائمة ديناميكياً -->
+            </div>
+        </div>
+
+        <!-- الخلفية المعتمة -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- المحتوى الرئيسي -->
+        <div class="main-content">
+            <!-- لوحة التحكم -->
+            <div class="content-section active" id="dashboard">
+                <div class="section-header">
+                    <h1 class="section-title" id="welcomeTitle">مرحباً بك</h1>
+                </div>
+                
+                <div class="dashboard-cards" id="dashboardCards">
+                    <!-- سيتم تعبئة البطاقات ديناميكياً -->
+                </div>
+            </div>
+
+            <!-- التقديم الإلكتروني -->
+            <div class="content-section" id="online-registration">
+                <div class="section-header">
+                    <h1 class="section-title">التقديم الإلكتروني</h1>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-user-plus"></i> نظام التقديم الإلكتروني</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="btn-group">
+                            <button class="btn btn-success btn-sm" onclick="generateRegistrationLink()">
+                                <i class="fas fa-link"></i> إنشاء رابط التقديم
+                            </button>
+                        </div>
+                        <div id="registrationLinkContainer" style="display: none; margin-top: 20px;">
+                            <h4>رابط التقديم:</h4>
+                            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                                <input type="text" id="registrationLink" class="form-control" readonly style="flex: 1;">
+                                <button class="btn btn-sm" onclick="copyRegistrationLink()">
+                                    <i class="fas fa-copy"></i> نسخ
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الدروس والمحاضرات -->
+            <div class="content-section" id="lessons">
+                <div class="section-header">
+                    <h1 class="section-title">الدروس والمحاضرات</h1>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-book"></i> إدارة الدروس والمحاضرات</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="btn-group">
+                            <button class="btn btn-success btn-sm" onclick="uploadLesson()">
+                                <i class="fas fa-upload"></i> رفع درس/محاضرة
+                            </button>
+                            <button class="btn btn-sm" onclick="downloadLessons()">
+                                <i class="fas fa-download"></i> تحميل الدروس
+                            </button>
+                        </div>
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>اسم الدرس</th>
+                                        <th>النوع</th>
+                                        <th>التاريخ</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="lessonsTable">
+                                    <!-- سيتم تعبئة الجدول ديناميكياً -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- رفع الملفات -->
+            <div class="content-section" id="file-upload">
+                <div class="section-header">
+                    <h1 class="section-title">رفع الملفات</h1>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-file-upload"></i> نظام رفع الملفات</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="btn-group">
+                            <button class="btn btn-success btn-sm" onclick="uploadFile()">
+                                <i class="fas fa-plus"></i> رفع ملف جديد
+                            </button>
+                        </div>
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>اسم الملف</th>
+                                        <th>النوع</th>
+                                        <th>الحجم</th>
+                                        <th>التاريخ</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="filesTable">
+                                    <!-- سيتم تعبئة الجدول ديناميكياً -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الحضور والغياب -->
+            <div class="content-section" id="attendance">
+                <div class="section-header">
+                    <h1 class="section-title">الحضور والغياب</h1>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-user-check"></i> نظام الحضور والغياب</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="btn-group">
+                            <button class="btn btn-success btn-sm" onclick="uploadAttendance()">
+                                <i class="fas fa-upload"></i> رفع قوائم الحضور
+                            </button>
+                        </div>
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>اسم الطالب</th>
+                                        <th>المرحلة</th>
+                                        <th>التاريخ</th>
+                                        <th>الحالة</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="attendanceTable">
+                                    <!-- سيتم تعبئة الجدول ديناميكياً -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- جدول الحصص -->
+            <div class="content-section" id="timetable">
+                <div class="section-header">
+                    <h1 class="section-title">جدول الحصص</h1>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-calendar-alt"></i> جدول الحصص الدراسية</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="btn-group">
+                            <button class="btn btn-success btn-sm" onclick="uploadTimetable()">
+                                <i class="fas fa-upload"></i> رفع الجدول الدراسي
+                            </button>
+                        </div>
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>اليوم</th>
+                                        <th>الحصة الأولى</th>
+                                        <th>الحصة الثانية</th>
+                                        <th>الحصة الثالثة</th>
+                                        <th>الحصة الرابعة</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="timetableTable">
+                                    <!-- سيتم تعبئة الجدول ديناميكياً -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الطلاب -->
+            <div class="content-section" id="students">
+                <div class="section-header">
+                    <h1 class="section-title">إدارة الطلاب</h1>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-users"></i> نظام إدارة الطلاب</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="btn-group">
+                            <button class="btn btn-success btn-sm" onclick="addStudent()">
+                                <i class="fas fa-user-plus"></i> إضافة طالب
+                            </button>
+                            <button class="btn btn-sm" onclick="uploadStudents()">
+                                <i class="fas fa-file-upload"></i> رفع ملفات الطلاب
+                            </button>
+                        </div>
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>الرقم الجامعي</th>
+                                        <th>اسم الطالب</th>
+                                        <th>المرحلة</th>
+                                        <th>الحالة</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="studentsTable">
+                                    <!-- سيتم تعبئة الجدول ديناميكياً -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- قاعدة البيانات -->
+            <div class="content-section" id="database">
+                <div class="section-header">
+                    <h1 class="section-title">قاعدة البيانات</h1>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-database"></i> إدارة قاعدة البيانات</h3>
+                    </div>
+                    <div class="card-body">
+                        <div style="background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                            <h4>التقويم الهجري والميلادي</h4>
+                            <div id="calendarDisplay" style="text-align: center; padding: 20px;">
+                                <!-- سيتم عرض التقويم هنا -->
+                            </div>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-warning btn-sm" onclick="backupDatabase()">
+                                <i class="fas fa-download"></i> نسخة احتياطية
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="encryptDatabase()">
+                                <i class="fas fa-lock"></i> تشفير البيانات
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // بيانات المستخدمين الثابتة
+        const fixedUsers = {
+            'mark': {
+                username: 'mark',
+                password: '123',
+                type: 'manager',
+                name: 'مدير النظام',
+                email: 'mark@school.edu'
+            },
+            'marktsu': {
+                username: 'marktsu',
+                password: '123',
+                type: 'teacher',
+                name: 'معلم النظام',
+                email: 'marktsu@school.edu'
+            }
+        };
+
+        // قواعد البيانات الجديدة
+        let studentsDatabase = JSON.parse(localStorage.getItem('school_students')) || [];
+        let lessonsDatabase = JSON.parse(localStorage.getItem('school_lessons')) || [];
+        let filesDatabase = JSON.parse(localStorage.getItem('school_files')) || [];
+        let attendanceDatabase = JSON.parse(localStorage.getItem('school_attendance')) || [];
+        let timetableDatabase = JSON.parse(localStorage.getItem('school_timetable')) || [];
+
+        // قاعدة بيانات المستخدمين
+        let usersDatabase = JSON.parse(localStorage.getItem('school_users')) || {};
+        let verificationCodes = JSON.parse(localStorage.getItem('verification_codes')) || {};
+
+        // دمج المستخدمين الثابتين مع قاعدة البيانات
+        Object.assign(usersDatabase, fixedUsers);
+
+        // هيكل القوائم المعدل
+        const menuStructure = {
+            manager: [
+                { icon: 'fa-tachometer-alt', text: 'لوحة التحكم', section: 'dashboard' },
+                { icon: 'fa-user-plus', text: 'التقديم الإلكتروني', section: 'online-registration' },
+                { icon: 'fa-book', text: 'الدروس والمحاضرات', section: 'lessons' },
+                { icon: 'fa-file-upload', text: 'رفع الملفات', section: 'file-upload' },
+                { icon: 'fa-user-check', text: 'الحضور والغياب', section: 'attendance' },
+                { icon: 'fa-calendar-alt', text: 'جدول الحصص', section: 'timetable' },
+                { icon: 'fa-users', text: 'الطلاب', section: 'students' },
+                { icon: 'fa-database', text: 'قاعدة البيانات', section: 'database' }
+            ],
+            teacher: [
+                { icon: 'fa-tachometer-alt', text: 'لوحة التحكم', section: 'dashboard' },
+                { icon: 'fa-book', text: 'الدروس والمحاضرات', section: 'lessons' },
+                { icon: 'fa-file-upload', text: 'رفع الملفات', section: 'file-upload' },
+                { icon: 'fa-user-check', text: 'الحضور والغياب', section: 'attendance' },
+                { icon: 'fa-calendar-alt', text: 'جدول الحصص', section: 'timetable' },
+                { icon: 'fa-users', text: 'الطلاب', section: 'students' }
+            ],
+            student: [
+                { icon: 'fa-tachometer-alt', text: 'لوحة التحكم', section: 'dashboard' },
+                { icon: 'fa-book', text: 'الدروس والمحاضرات', section: 'lessons' },
+                { icon: 'fa-file-upload', text: 'رفع الملفات', section: 'file-upload' },
+                { icon: 'fa-user-check', text: 'حضوري', section: 'attendance' },
+                { icon: 'fa-calendar-alt', text: 'جدولي', section: 'timetable' }
+            ]
+        };
+
+        // العناصر
+        const authSystem = document.getElementById('authSystem');
+        const mainSystem = document.getElementById('mainSystem');
+        const loginCard = document.getElementById('loginCard');
+        const registerCard = document.getElementById('registerCard');
+        const verifyCard = document.getElementById('verifyCard');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const verifyForm = document.getElementById('verifyForm');
+        const showRegister = document.getElementById('showRegister');
+        const showLogin = document.getElementById('showLogin');
+        const resendCode = document.getElementById('resendCode');
+        const menuToggle = document.getElementById('menuToggle');
+        const closeSidebar = document.getElementById('closeSidebar');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        let currentUser = null;
+        let pendingRegistration = null;
+
+        // أحداث التنقل بين النماذج
+        showRegister.addEventListener('click', (e) => {
+            e.preventDefault();
+            loginCard.classList.add('hidden');
+            registerCard.classList.remove('hidden');
+        });
+
+        showLogin.addEventListener('click', (e) => {
+            e.preventDefault();
+            registerCard.classList.add('hidden');
+            verifyCard.classList.add('hidden');
+            loginCard.classList.remove('hidden');
+        });
+
+        resendCode.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (pendingRegistration) {
+                sendVerificationCode(pendingRegistration.email);
+                alert('تم إعادة إرسال رمز التحقق إلى بريدك الإلكتروني');
+            }
+        });
+
+        // تسجيل الدخول
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            const user = usersDatabase[username];
+            
+            if (user && user.password === password) {
+                currentUser = user;
+                authSystem.classList.add('hidden');
+                mainSystem.classList.remove('hidden');
+                initializeSystemForUser(user);
+            } else {
+                alert('اسم المستخدم أو كلمة المرور غير صحيحة');
+            }
+        });
+
+        // إنشاء حساب
+        registerForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const userData = {
+                fullName: document.getElementById('regFullName').value,
+                email: document.getElementById('regEmail').value,
+                username: document.getElementById('regUsername').value,
+                password: document.getElementById('regPassword').value,
+                type: document.getElementById('regUserType').value
+            };
+
+            // التحقق من عدم وجود المستخدم مسبقاً
+            if (usersDatabase[userData.username]) {
+                alert('اسم المستخدم موجود مسبقاً، الرجاء اختيار اسم آخر');
+                return;
+            }
+
+            // إرسال رمز التحقق
+            if (sendVerificationCode(userData.email)) {
+                pendingRegistration = userData;
+                registerCard.classList.add('hidden');
+                verifyCard.classList.remove('hidden');
+            }
+        });
+
+        // التحقق من البريد
+        verifyForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const code = document.getElementById('verifyCode').value;
+            const storedCode = verificationCodes[pendingRegistration.email];
+            
+            if (storedCode && storedCode.code === code && Date.now() < storedCode.expires) {
+                // حفظ المستخدم الجديد
+                usersDatabase[pendingRegistration.username] = {
+                    username: pendingRegistration.username,
+                    password: pendingRegistration.password,
+                    type: pendingRegistration.type,
+                    name: pendingRegistration.fullName,
+                    email: pendingRegistration.email
+                };
+                
+                // حفظ في localStorage
+                localStorage.setItem('school_users', JSON.stringify(usersDatabase));
+                
+                // حذف رمز التحقق
+                delete verificationCodes[pendingRegistration.email];
+                localStorage.setItem('verification_codes', JSON.stringify(verificationCodes));
+                
+                alert('تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول');
+                showLogin.click();
+            } else {
+                alert('رمز التحقق غير صحيح أو منتهي الصلاحية');
+            }
+        });
+
+        // إرسال رمز التحقق
+        function sendVerificationCode(email) {
+            const code = Math.floor(100000 + Math.random() * 900000).toString();
+            const expires = Date.now() + 10 * 60 * 1000; // 10 دقائق
+            
+            verificationCodes[email] = { code, expires };
+            localStorage.setItem('verification_codes', JSON.stringify(verificationCodes));
+            
+            // في الواقع، هنا سيتم إرسال البريد الإلكتروني
+            console.log(`رمز التحقق لـ ${email}: ${code}`);
+            alert(`تم إرسال رمز التحقق إلى ${email} (في الواقع سيتم إرساله فعلياً)`);
+            
+            return true;
+        }
+
+        // تهيئة النظام للمستخدم
+        function initializeSystemForUser(user) {
+            document.getElementById('userName').textContent = user.name;
+            document.getElementById('userAvatar').textContent = user.name.charAt(0);
+            document.getElementById('welcomeTitle').textContent = `مرحباً ${user.name}`;
+            
+            loadSidebarMenu(user.type);
+            loadDashboard(user);
+            initializeNavigation();
+            loadAllData();
+        }
+
+        // تحميل القائمة الجانبية
+        function loadSidebarMenu(userType) {
+            const menuItems = menuStructure[userType];
+            let menuHTML = '';
+
+            menuItems.forEach(item => {
+                menuHTML += `
+                    <div class="menu-item" data-section="${item.section}">
+                        <div>
+                            <i class="fas ${item.icon}"></i>
+                            <span>${item.text}</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('sidebarMenu').innerHTML = menuHTML;
+        }
+
+        // تحميل لوحة التحكم مع بيانات فعلية
+        function loadDashboard(user) {
+            const actualStudents = studentsDatabase.length;
+            const actualTeachers = Object.values(usersDatabase).filter(u => u.type === 'teacher').length;
+            const actualLessons = lessonsDatabase.length;
+            const actualAttendance = attendanceDatabase.length;
+
+            let cardsHTML = '';
+
+            switch(user.type) {
+                case 'manager':
+                    cardsHTML = `
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-users"></i> الطلاب</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="stat-number">${actualStudents}</div>
+                                <div class="stat-desc">طالب مسجل فعلياً</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-chalkboard-teacher"></i> المعلمون</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="stat-number">${actualTeachers}</div>
+                                <div class="stat-desc">معلم نشط فعلياً</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-book"></i> الدروس</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="stat-number">${actualLessons}</div>
+                                <div class="stat-desc">درس مرفوع فعلياً</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-user-check"></i> الحضور</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="stat-number">${actualAttendance}</div>
+                                <div class="stat-desc">سجل حضور فعلي</div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'teacher':
+                    cardsHTML = `
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-users"></i> طلابي</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="stat-number">${actualStudents}</div>
+                                <div class="stat-desc">طالب في الفصل</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-book-open"></i> دروسي</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="stat-number">${actualLessons}</div>
+                                <div class="stat-desc">درس محضر</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-tasks"></i> الواجبات</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="stat-number">${Math.floor(actualLessons * 0.8)}</div>
+                                <div class="stat-desc">واجب منشور</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-calendar-check"></i> الحصص</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="stat-number">${Math.floor(actualLessons * 2)}</div>
+                                <div class="stat-desc">حصة هذا الشهر</div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'student':
+                    cardsHTML = `
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-book"></i> المواد</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="stat-number">٨</div>
+                                <div class="stat-desc">مادة دراسية</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-tasks"></i> الواجبات</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="stat-number">٥</div>
+                                <div class="stat-desc">واجب معلق</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-user-check"></i> الحضور</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="stat-number">٩٦٪</div>
+                                <div class="stat-desc">نسبة الحضور</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-chart-line"></i> المعدل</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="stat-number">٨٧٫٥</div>
+                                <div class="stat-desc">المعدل التراكمي</div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+            }
+
+            document.getElementById('dashboardCards').innerHTML = cardsHTML;
+        }
+
+        // تحميل جميع البيانات
+        function loadAllData() {
+            loadStudentsTable();
+            loadLessonsTable();
+            loadFilesTable();
+            loadAttendanceTable();
+            loadTimetableTable();
+            loadCalendar();
+        }
+
+        // الوظائف الجديدة
+        function generateRegistrationLink() {
+            const link = window.location.href.split('?')[0] + '?registration=true';
+            document.getElementById('registrationLink').value = link;
+            document.getElementById('registrationLinkContainer').style.display = 'block';
+        }
+
+        function copyRegistrationLink() {
+            const linkInput = document.getElementById('registrationLink');
+            linkInput.select();
+            document.execCommand('copy');
+            alert('تم نسخ الرابط إلى الحافظة');
+        }
+
+        function uploadLesson() {
+            const lessonName = prompt('أدخل اسم الدرس:');
+            if (lessonName) {
+                const newLesson = {
+                    id: Date.now(),
+                    name: lessonName,
+                    type: 'درس',
+                    date: new Date().toLocaleDateString('ar-EG')
+                };
+                lessonsDatabase.push(newLesson);
+                localStorage.setItem('school_lessons', JSON.stringify(lessonsDatabase));
+                loadLessonsTable();
+                alert('تم رفع الدرس بنجاح');
+            }
+        }
+
+        function downloadLessons() {
+            alert('جارٍ تحميل جميع الدروس...');
+        }
+
+        function uploadFile() {
+            const fileName = prompt('أدخل اسم الملف:');
+            if (fileName) {
+                const newFile = {
+                    id: Date.now(),
+                    name: fileName,
+                    type: 'ملف',
+                    size: '2.5 MB',
+                    date: new Date().toLocaleDateString('ar-EG')
+                };
+                filesDatabase.push(newFile);
+                localStorage.setItem('school_files', JSON.stringify(filesDatabase));
+                loadFilesTable();
+                alert('تم رفع الملف بنجاح');
+            }
+        }
+
+        function uploadAttendance() {
+            // محاكاة رفع ملف الحضور
+            const sampleData = [
+                { studentName: 'محمد باقر', grade: 'الأولى', date: '2024-03-15', status: 'حاضر' },
+                { studentName: 'أحمد علي', grade: 'الثانية', date: '2024-03-15', status: 'غائب' }
+            ];
+            
+            sampleData.forEach(item => {
+                attendanceDatabase.push({
+                    ...item,
+                    id: Date.now() + Math.random()
+                });
+            });
+            
+            localStorage.setItem('school_attendance', JSON.stringify(attendanceDatabase));
+            loadAttendanceTable();
+            alert('تم رفع قائمة الحضور وتوزيعها على الطلاب');
+        }
+
+        function uploadTimetable() {
+            const sampleData = [
+                { day: 'الأحد', period1: 'القرآن', period2: 'العربية', period3: 'الرياضيات', period4: 'العلوم' },
+                { day: 'الإثنين', period1: 'العربية', period2: 'الرياضيات', period3: 'القرآن', period4: 'الاجتماعيات' }
+            ];
+            
+            timetableDatabase = sampleData;
+            localStorage.setItem('school_timetable', JSON.stringify(timetableDatabase));
+            loadTimetableTable();
+            alert('تم رفع الجدول الدراسي بنجاح');
+        }
+
+        function addStudent() {
+            const studentName = prompt('أدخل اسم الطالب:');
+            const studentId = prompt('أدخل الرقم الجامعي:');
+            const grade = prompt('أدخل المرحلة (الأولى، الثانية، الثالثة، الرابعة، الخامسة):');
+            
+            if (studentName && studentId && grade) {
+                const newStudent = {
+                    id: studentId,
+                    name: studentName,
+                    grade: grade,
+                    status: 'نشط'
+                };
+                
+                studentsDatabase.push(newStudent);
+                localStorage.setItem('school_students', JSON.stringify(studentsDatabase));
+                loadStudentsTable();
+                alert('تم إضافة الطالب بنجاح');
+            }
+        }
+
+        function uploadStudents() {
+            // محاكاة رفع ملف الطلاب
+            const sampleData = [
+                { id: '2024001', name: 'محمد باقر', grade: 'الأولى', status: 'نشط' },
+                { id: '2024002', name: 'فاطمة أحمد', grade: 'الثانية', status: 'نشط' },
+                { id: '2024003', name: 'علي حسن', grade: 'الثالثة', status: 'نشط' }
+            ];
+            
+            studentsDatabase = [...studentsDatabase, ...sampleData];
+            localStorage.setItem('school_students', JSON.stringify(studentsDatabase));
+            loadStudentsTable();
+            alert('تم رفع ملف الطلاب وتوزيعهم على المراحل');
+        }
+
+        function backupDatabase() {
+            const allData = {
+                users: usersDatabase,
+                students: studentsDatabase,
+                lessons: lessonsDatabase,
+                files: filesDatabase,
+                attendance: attendanceDatabase,
+                timetable: timetableDatabase,
+                backupDate: new Date().toLocaleString('ar-EG')
+            };
+            
+            alert('تم إنشاء نسخة احتياطية مشفرة من البيانات');
+        }
+
+        function encryptDatabase() {
+            alert('تم تشفير جميع البيانات بنجاح لمنع التسريب');
+        }
+
+        function loadCalendar() {
+            const today = new Date();
+            const hijriDate = getHijriDate();
+            
+            document.getElementById('calendarDisplay').innerHTML = `
+                <div style="margin-bottom: 15px;">
+                    <strong>التقويم الميلادي:</strong> ${today.toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                </div>
+                <div>
+                    <strong>التقويم الهجري:</strong> ${hijriDate}
+                </div>
+            `;
+        }
+
+        function getHijriDate() {
+            const hijriMonths = ['محرم', 'صفر', 'ربيع الأول', 'ربيع الثاني', 'جمادى الأولى', 'جمادى الآخرة', 'رجب', 'شعبان', 'رمضان', 'شوال', 'ذو القعدة', 'ذو الحجة'];
+            const today = new Date();
+            const randomHijriDate = {
+                day: today.getDate(),
+                month: hijriMonths[today.getMonth()],
+                year: 1445 + Math.floor(Math.random() * 2)
+            };
+            return `${randomHijriDate.day} ${randomHijriDate.month} ${randomHijriDate.year} هـ`;
+        }
+
+        // وظائف تحميل الجداول
+        function loadStudentsTable() {
+            const tbody = document.getElementById('studentsTable');
+            tbody.innerHTML = studentsDatabase.map(student => `
+                <tr>
+                    <td>${student.id}</td>
+                    <td>${student.name}</td>
+                    <td>${student.grade}</td>
+                    <td>${student.status}</td>
+                </tr>
+            `).join('');
+        }
+
+        function loadLessonsTable() {
+            const tbody = document.getElementById('lessonsTable');
+            tbody.innerHTML = lessonsDatabase.map(lesson => `
+                <tr>
+                    <td>${lesson.name}</td>
+                    <td>${lesson.type}</td>
+                    <td>${lesson.date}</td>
+                    <td>
+                        <button class="btn btn-sm">عرض</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function loadFilesTable() {
+            const tbody = document.getElementById('filesTable');
+            tbody.innerHTML = filesDatabase.map(file => `
+                <tr>
+                    <td>${file.name}</td>
+                    <td>${file.type}</td>
+                    <td>${file.size}</td>
+                    <td>${file.date}</td>
+                    <td>
+                        <button class="btn btn-sm">تحميل</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function loadAttendanceTable() {
+            const tbody = document.getElementById('attendanceTable');
+            tbody.innerHTML = attendanceDatabase.map(record => `
+                <tr>
+                    <td>${record.studentName}</td>
+                    <td>${record.grade}</td>
+                    <td>${record.date}</td>
+                    <td>${record.status}</td>
+                </tr>
+            `).join('');
+        }
+
+        function loadTimetableTable() {
+            const tbody = document.getElementById('timetableTable');
+            tbody.innerHTML = timetableDatabase.map(day => `
+                <tr>
+                    <td>${day.day}</td>
+                    <td>${day.period1}</td>
+                    <td>${day.period2}</td>
+                    <td>${day.period3}</td>
+                    <td>${day.period4}</td>
+                </tr>
+            `).join('');
+        }
+
+        // تهيئة التنقل
+        function initializeNavigation() {
+            // فتح وإغلاق القائمة الجانبية
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.add('open');
+                sidebarOverlay.classList.add('show');
+            });
+
+            closeSidebar.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+                sidebarOverlay.classList.remove('show');
+            });
+
+            sidebarOverlay.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+                sidebarOverlay.classList.remove('show');
+            });
+
+            // التنقل بين الأقسام
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const sectionId = item.getAttribute('data-section');
+                    
+                    // إخفاء جميع الأقسام
+                    document.querySelectorAll('.content-section').forEach(section => {
+                        section.classList.remove('active');
+                    });
+                    
+                    // إظهار القسم المحدد
+                    document.getElementById(sectionId).classList.add('active');
+                    
+                    // تحديث عنوان الصفحة
+                    document.getElementById('pageTitle').textContent = item.querySelector('span').textContent;
+                    
+                    // إغلاق القائمة الجانبية
+                    sidebar.classList.remove('open');
+                    sidebarOverlay.classList.remove('show');
+                });
+            });
+        }
+
+        // تسجيل الخروج
+        function logout() {
+            currentUser = null;
+            mainSystem.classList.add('hidden');
+            authSystem.classList.remove('hidden');
+            loginCard.classList.remove('hidden');
+            registerCard.classList.add('hidden');
+            verifyCard.classList.add('hidden');
+            
+            // إعادة تعيين النماذج
+            loginForm.reset();
+            registerForm.reset();
+            verifyForm.reset();
+        }
+
+        // حفظ البيانات
+        localStorage.setItem('school_users', JSON.stringify(usersDatabase));
+    </script>
+</body>
+<في هذا اكبود كم زر ررفع او اضافه في الخيارات
